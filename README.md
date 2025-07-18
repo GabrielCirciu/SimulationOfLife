@@ -1,21 +1,22 @@
-# MCSurvivalFolia
+# Simulation of Life
 
 A Minecraft plugin for Folia that adds survival mechanics by reducing player hunger when placing or destroying blocks.
 
 ## Features
 
-- **Hunger Reduction**: Players lose hunger when placing or destroying blocks
-- **Configurable Settings**: Customize hunger reduction amounts, cooldowns, and exempt blocks
+- **Exhaustion Management**: Players gain Exhaustion when doing certain activities such as mining, fighting, farming
+- **Specializations**: Increase your efficieny by managing what you specialize in, be careful though, you can only be good at so many things
+- **Configurable Settings**: Customize many parts of your experience, like the exhaustion amounts, cooldown, block exemptions, specialization points gain
 - **Permission System**: Bypass permissions for admins or specific players
-- **Block Exemptions**: Exclude specific block types from hunger reduction
-- **Cooldown System**: Prevent spam by implementing cooldowns between hunger reductions
+- **Block Exemptions**: Exclude specific block types from exhaustion gain
+- **Cooldown System**: Prevent spam by implementing cooldowns between exhaustion checks
 - **Debug Mode**: Detailed logging for troubleshooting
-- **Admin Commands**: Reload configuration and check plugin status
+- **Admin Commands**: From statistics to reloading the plugin, it offers some tools to observe and manage the plugin
 
 ## Requirements
 
 - **Minecraft Server**: Folia 1.20.4 or higher
-- **Java**: Java 17 or higher
+- **Java**: Java 21 or higher
 - **Maven**: For building the plugin
 
 ## Installation
@@ -24,8 +25,8 @@ A Minecraft plugin for Folia that adds survival mechanics by reducing player hun
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/mc-survival-folia.git
-   cd mc-survival-folia
+   git clone https://github.com/GabrielCirciu/SimulationOfLife
+   cd SimulationOfLife
    ```
 
 2. Build the plugin using Maven:
@@ -33,7 +34,7 @@ A Minecraft plugin for Folia that adds survival mechanics by reducing player hun
    mvn clean package
    ```
 
-3. Copy the generated JAR file from `target/mc-survival-folia-1.0.0.jar` to your server's `plugins` folder.
+3. Copy the generated JAR file from `target/simulationoflife-x.x.x.jar` to your server's `plugins` folder.
 
 4. Start or restart your Folia server.
 
@@ -45,144 +46,124 @@ A Minecraft plugin for Folia that adds survival mechanics by reducing player hun
 
 ## Configuration
 
-The plugin creates a `config.yml` file in the `plugins/MCSurvivalFolia/` directory. Here's what each section does:
+The plugin creates a `config.yml` file in the `plugins/SimulationOfLife/` directory. Here's what each section does:
 
 ### General Settings
 
 ```yaml
 general:
-  enabled: true    # Enable or disable the plugin
-  debug: false     # Enable debug logging
+  enabled: true             # Enable or disable the plugin
+  debug: false              # Debug mode for server-side logging
+  player-messages: false    # Send player messages of their activity
+  admin-messages: true      # Send admin messages for commands (you shouldn't set this to false :) )
 ```
 
 ### Hunger Settings
 
 ```yaml
-hunger:
-  place-block: 0.5      # Hunger reduction when placing blocks (0.0 - 20.0)
-  destroy-block: 0.3    # Hunger reduction when destroying blocks (0.0 - 20.0)
-  minimum-hunger: 2.0   # Minimum hunger level (prevents starvation)
-  cooldown: 1000        # Cooldown between hunger reductions in milliseconds
+exhaustion:
+  place-block: 1.0          # Amount of exhaustion to gain when placing a block (0.0 - 20.0)
+  mining-block: 1.0         # Amount of exhaustion to gain when destroying a block (0.0 - 20.0)
+  farming-block: 1.0        # Amount of exhaustion to gain when farming a block (0.0 - 20.0)
+  hit-entity: 1.0           # Amount of exhaustion to gain when hitting entities (0.0 - 20.0)
+  default: 1.0              # Amount of exhaustion to reduce when doing a default action (0.0 - 20.0)
+  minimum-food-level: 0.0   # Minimum food level before reduction happens (prevents starvation at >0)
+  cooldown: 100             # Cooldown between exhaustions in milliseconds (0 = no cooldown)
+```
+
+### Specialization Settings
+
+```yaml
+specialization:
+  building: 1               # Amount of points to gain when building
+  fighting: 1               # Amount of points to gain when fighting
+  athletics: 1              # Amount of points to gain when being athletic
+  mining: 1                 # Amount of points to gain when mining
+  farming: 1                # Amount of points to gain when farming
+  max-points: 100           # Maximum points a player can have
+```
+
+### Athletics Settings
+
+```yaml
+run-speed:
+  
+  base-speed: 0.2           # Base run speed when sprinting (default Minecraft sprint speed is ~0.2)
+  speed-increase-per-level: 0.005  # Speed increase per athletics level (0.01 = 1% increase per level)
 ```
 
 ### Block Exemptions
 
 ```yaml
 blocks:
-  place-exempt:         # Blocks that don't cause hunger when placed
+  place-exempt:             # Blocks that don't cause exhaustion when placed
     - AIR
     - CAVE_AIR
     - VOID_AIR
-    - WATER
-    - LAVA
-    - FIRE
-  
-  destroy-exempt:       # Blocks that don't cause hunger when destroyed
+  destroy-exempt:           # Blocks that don't cause exhaustion when destroyed
     - AIR
     - CAVE_AIR
     - VOID_AIR
-    - WATER
-    - LAVA
-    - FIRE
-    - GRASS
-    - TALL_GRASS
-    - DEAD_BUSH
-    - FERN
-    - LARGE_FERN
 ```
 
 ### Messages
 
 ```yaml
 messages:
-  prefix: "&8[&cMCSurvival&8] &r"  # Message prefix
-  hunger-reduced: "&eYou feel tired from your work. Hunger: &c{hunger}&e/&a20"
-  plugin-reloaded: "&aPlugin configuration reloaded!"
-  plugin-status: "&aPlugin is &2enabled&a. Hunger reduction: &e{place} &7(place), &e{destroy} &7(destroy)"
-  plugin-disabled: "&cPlugin is &4disabled&c."
+  prefix: "<dark_gray>[<red>Simulation of Life</red>]</dark_gray> "
+  exhaustion-reduced: "<yellow>Exhaustion: <red>{exhaustion}</red>/<green>4</green></yellow>"
+  plugin-reloaded: "<green>Plugin configuration reloaded!</green>"
+  plugin-status: "<green>Plugin is <dark_green>enabled</dark_green>"
+  plugin-disabled: "<red>Plugin is <dark_red>disabled</dark_red></red>" 
 ```
 
 ## Commands
 
 ### Admin Commands
 
-- `/mcsurvival reload` - Reload the plugin configuration
-- `/mcsurvival status` - Show plugin status and current settings
+- `/simulationoflife reload` - Reload the plugin configuration
+- `/simulationoflife status` - Show plugin status and current settings
+- `/simulationoflife perf`   - Show performance metrics of actions happening
+- `/simulationoflife debug`  - Show if debug is enabled
+- `/simulationoflife specs`  - Show overall server-wide specialization stats
+- `/simulationoflife stats`  - Show your own player specialization stats
+
+### Player Commands
+
+- `/simulationoflife stats`  - Show your own player specialization stats
 
 ### Permissions
 
-- `mcsurvival.admin` - Access to admin commands (default: op)
-- `mcsurvival.bypass` - Bypass hunger reduction from block actions (default: false)
+- `simulationoflife.admin`   - Access to admin commands (default: op)
+- `simulationoflife.player`   - Access to only player commnands (default: true)
+- `simulationoflife.bypass`  - Bypass hunger reduction from block actions (default: false)
 
 ## Usage
 
 ### For Players
 
-1. The plugin automatically activates when you place or destroy blocks in survival mode
-2. You'll receive a message when your hunger is reduced
-3. Players with the `mcsurvival.bypass` permission won't lose hunger
-4. The plugin respects minimum hunger levels to prevent starvation
+1. The plugin automatically activates when you place or destroy blocks, or hit entities in survival mode
+2. You'll receive a message when your hunger is reduced (if player messages are enabled)
+3. Players with the `simulationoflife.bypass` permission won't gain exhaustion
+4. The plugin may respect minimum hunger levels to prevent starvation
 
 ### For Server Administrators
 
 1. **Installation**: Place the JAR file in your `plugins` folder and restart the server
-2. **Configuration**: Edit `plugins/MCSurvivalFolia/config.yml` to customize settings
-3. **Reloading**: Use `/mcsurvival reload` to apply configuration changes without restarting
-4. **Monitoring**: Use `/mcsurvival status` to check plugin status and settings
-5. **Debugging**: Enable debug mode in the config to see detailed logs
-
-## Customization Examples
-
-### More Realistic Hunger System
-
-```yaml
-hunger:
-  place-block: 0.2      # Less hunger for placing
-  destroy-block: 0.4    # More hunger for breaking
-  minimum-hunger: 3.0   # Higher minimum to prevent starvation
-  cooldown: 2000        # 2-second cooldown
-```
-
-### Hardcore Mode
-
-```yaml
-hunger:
-  place-block: 1.0      # High hunger cost for placing
-  destroy-block: 1.5    # Very high hunger cost for breaking
-  minimum-hunger: 1.0   # Lower minimum for challenge
-  cooldown: 500         # Short cooldown for frequent actions
-```
-
-### Exempting More Blocks
-
-```yaml
-blocks:
-  place-exempt:
-    - AIR
-    - CAVE_AIR
-    - VOID_AIR
-    - WATER
-    - LAVA
-    - FIRE
-    - TORCH
-    - REDSTONE_TORCH
-    - LEVER
-    - BUTTON
-    - PRESSURE_PLATE
-```
+2. **Configuration**: Edit `plugins/SimulationOfLife/config.yml` to customize settings
+3. **Reloading**: Use `/simulationoflife reload` to apply configuration changes without restarting
+4. **Monitoring**: Use `/simulationoflife status` to check plugin status and settings
+5. **Debugging**: Enable debug mode in the config to see server-side logs
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Plugin not working**: Check if the plugin is enabled in the config
-2. **No hunger reduction**: Verify the player is in survival mode and doesn't have bypass permission
-3. **Configuration not loading**: Use `/mcsurvival reload` to reload the config
-4. **Debug information**: Enable debug mode in the config to see detailed logs
+Let me know of any issues.
 
 ### Logs
 
-Check your server logs for messages starting with `[MCSurvivalFolia]` for plugin-related information.
+Check your server logs for messages starting with `[Simulation Of Life]` for plugin-related information (in most cases).
 
 ## Development
 
@@ -196,8 +177,8 @@ mvn clean package
 
 1. Build the plugin
 2. Place the JAR in a test server's plugins folder
-3. Test block placement and destruction
-4. Verify hunger reduction and cooldowns work correctly
+3. Test your action
+4. Verify that features work or not
 
 ## Contributing
 
@@ -222,11 +203,12 @@ If you encounter any issues or have questions:
 
 ## Changelog
 
-### Version 1.0.0
+### Version 0.6.0
 - Initial release
-- Basic hunger reduction system
+- Basic exhaustion system
+- Basic specialization system
 - Configurable settings
 - Block exemptions
 - Cooldown system
-- Admin commands
+- Admin and Player commands
 - Permission system 
