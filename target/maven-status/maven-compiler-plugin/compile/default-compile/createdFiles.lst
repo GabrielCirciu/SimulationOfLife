@@ -1,0 +1,10 @@
+com\binkibonk\simulationoflife\listeners\EntityListener.class
+com\binkibonk\simulationoflife\listeners\BlockListener.class
+com\binkibonk\simulationoflife\listeners\RunListener.class
+com\binkibonk\simulationoflife\SimulationOfLife.class
+com\binkibonk\simulationoflife\managers\SpecializationManager.class
+com\binkibonk\simulationoflife\utils\PerformanceMonitor.class
+com\binkibonk\simulationoflife\commands\SimulationOfLifeCommand.class
+com\binkibonk\simulationoflife\managers\ConfigManager.class
+com\binkibonk\simulationoflife\managers\ExhaustionManager.class
+com\binkibonk\simulationoflife\managers\SpecializationManager$SpecializationType.class
