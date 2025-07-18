@@ -1,6 +1,6 @@
 # Simulation of Life
 
-A Minecraft plugin for Folia that adds survival mechanics by reducing player hunger when placing or destroying blocks.
+A hardcore plugin that adds survival mechanics by exhausting the player when performing certain actions such as mining, farming, fightng, and more. Alongside that it adds a specialization system that lets you get less exhausted in a field that you master, but beware, there is only so much you can do.
 
 ## Features
 
