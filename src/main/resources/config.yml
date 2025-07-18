@@ -1,0 +1,73 @@
+# Simulation of Life Configuration
+# This plugin is a simulation of life
+
+# General settings
+general:
+  # Enable or disable the plugin
+  enabled: true
+  # Debug mode for logging
+  debug: false
+  # Send player messages of their activity
+  player-messages: false
+  # Send admin messages for commands (you shouldn't set this to false :) )
+  admin-messages: true
+
+# Exhaustion settings
+exhaustion:
+  # Amount of exhaustion to reduce when placing a block (0.0 - 20.0)
+  place-block: 1.0
+  # Amount of exhaustion to reduce when destroying a block (0.0 - 20.0)
+  mining-block: 1.0
+  # Amount of exhaustion to reduce when farming a block (0.0 - 20.0)
+  farming-block: 1.0
+  # Amount of exhaustion to reduce when hitting entities (0.0 - 20.0)
+  hit-entity: 1.0
+  # Amount of exhaustion to reduce when doing a default action (0.0 - 20.0)
+  default: 1.0
+  # Minimum food level before reducing (prevents starvation)
+  minimum-food-level: 0.0
+  # Cooldown between exhaustion reductions in milliseconds (0 = no cooldown)
+  cooldown: 100
+
+# Specialization settings
+specialization:
+  # Amount of points to gain when building
+  building: 1
+  # Amount of points to gain when fighting
+  fighting: 1
+  # Amount of points to gain when being athletic
+  athletics: 1
+  # Amount of points to gain when mining
+  mining: 1
+  # Amount of points to gain when farming
+  farming: 1
+  # Maximum points a player can have
+  max-points: 100
+
+# Run speed settings
+run-speed:
+  # Base run speed when sprinting (default Minecraft sprint speed is ~0.2)
+  base-speed: 0.2
+  # Speed increase per athletics level (0.01 = 1% increase per level)
+  speed-increase-per-level: 0.005
+
+# Block-specific settings
+blocks:
+  # Blocks that don't cause exhaustion when placed
+  place-exempt:
+    - AIR
+    - CAVE_AIR
+    - VOID_AIR
+  # Blocks that don't cause exhaustion when destroyed
+  destroy-exempt:
+    - AIR
+    - CAVE_AIR
+    - VOID_AIR
+
+# Messages
+messages:
+  prefix: "<dark_gray>[<red>Simulation of Life</red>]</dark_gray> "
+  exhaustion-reduced: "<yellow>Exhaustion: <red>{exhaustion}</red>/<green>4</green></yellow>"
+  plugin-reloaded: "<green>Plugin configuration reloaded!</green>"
+  plugin-status: "<green>Plugin is <dark_green>enabled</dark_green>"
+  plugin-disabled: "<red>Plugin is <dark_red>disabled</dark_red></red>" 
