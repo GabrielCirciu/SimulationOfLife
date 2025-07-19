@@ -156,24 +156,7 @@ messages:
 - `simulationoflife.player`   - Access to only player commnands (default: true)
 - `simulationoflife.bypass`  - Bypass hunger reduction from block actions (default: false)
 
-# Usage
-
-### For Players
-
-1. The plugin automatically activates when you place or destroy blocks, or hit entities in survival mode
-2. You'll receive a message when you recieve exhaustion (if player messages are enabled)
-3. Players with the `simulationoflife.bypass` permission won't gain exhaustion
-4. The plugin may respect minimum hunger levels to prevent starvation
-
-### For Server Administrators
-
-1. **Installation**: Place the JAR file in your `plugins` folder and restart the server
-2. **Configuration**: Edit `plugins/SimulationOfLife/config.yml` to customize settings
-3. **Reloading**: Use `/simulationoflife reload` to apply configuration changes without restarting
-4. **Monitoring**: Use `/simulationoflife status` to check plugin status and settings
-5. **Debugging**: Enable debug mode in the config to see server-side logs
-
-## Troubleshooting
+# Troubleshooting
 
 ### Common Issues
 
