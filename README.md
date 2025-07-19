@@ -17,14 +17,14 @@ All of this works in the backend, but allows players to view their specializatio
 
 # Usage
 
-## For Players
+### For Players
 
 1. The plugin automatically activates when you place or destroy blocks, or hit entities in survival mode
 2. You'll receive a message when you recieve exhaustion (if player messages are enabled)
 3. Players with the `simulationoflife.bypass` permission won't gain exhaustion
 4. The plugin may respect minimum hunger levels to prevent starvation
 
-## For Server Administrators
+### For Server Administrators
 
 1. **Installation**: Place the JAR file in your `plugins` folder and restart the server
 2. **Configuration**: Edit `plugins/SimulationOfLife/config.yml` to customize settings
@@ -34,15 +34,15 @@ All of this works in the backend, but allows players to view their specializatio
 
 # Installation
 
-## Download Pre-built JAR
+### Download Pre-built JAR
 
 1. Download the latest release JAR file from the releases page.
 2. Place the JAR file in your server's `plugins` folder.
 3. Start or restart your Folia server.
 
-## Building from Source
+### Building from Source
 
-### Requirements for building
+#### Requirements for building
 
 - **Minecraft Server**: Folia 1.20.4 or higher
 - **Java**: Java 21 or higher
@@ -67,7 +67,7 @@ All of this works in the backend, but allows players to view their specializatio
 
 The plugin creates a `config.yml` file in the `plugins/SimulationOfLife/` directory. Here's what each section does:
 
-## General Settings
+### General Settings
 
 ```yaml
 general:
@@ -77,7 +77,7 @@ general:
   admin-messages: true      # Send admin messages for commands (you shouldn't set this to false :) )
 ```
 
-## Exhaustion Settings
+### Exhaustion Settings
 
 ```yaml
 exhaustion:
@@ -90,7 +90,7 @@ exhaustion:
   cooldown: 100             # Cooldown between exhaustions in milliseconds (0 = no cooldown)
 ```
 
-## Specialization Settings
+### Specialization Settings
 
 ```yaml
 specialization:
@@ -102,7 +102,7 @@ specialization:
   max-points: 100           # Maximum points a player can have
 ```
 
-## Athletics Settings
+### Athletics Settings
 
 ```yaml
 run-speed:
@@ -110,7 +110,7 @@ run-speed:
   speed-increase-per-level: 0.005  # Speed increase per athletics level (0.01 = 1% increase per level)
 ```
 
-## Block Exemptions
+### Block Exemptions
 
 ```yaml
 blocks:
@@ -124,7 +124,7 @@ blocks:
     - VOID_AIR
 ```
 
-## Messages
+### Messages
 
 ```yaml
 messages:
@@ -137,7 +137,7 @@ messages:
 
 # Commands
 
-## Admin Commands
+### Admin Commands
 
 - `/simulationoflife reload` - Reload the plugin configuration
 - `/simulationoflife status` - Show plugin status and current settings
@@ -146,7 +146,7 @@ messages:
 - `/simulationoflife specs`  - Show overall server-wide specialization stats
 - `/simulationoflife stats`  - Show your own player specialization stats
 
-## Player Commands
+### Player Commands
 
 - `/simulationoflife stats`  - Show your own player specialization stats
 
@@ -158,14 +158,14 @@ messages:
 
 # Usage
 
-## For Players
+### For Players
 
 1. The plugin automatically activates when you place or destroy blocks, or hit entities in survival mode
 2. You'll receive a message when you recieve exhaustion (if player messages are enabled)
 3. Players with the `simulationoflife.bypass` permission won't gain exhaustion
 4. The plugin may respect minimum hunger levels to prevent starvation
 
-## For Server Administrators
+### For Server Administrators
 
 1. **Installation**: Place the JAR file in your `plugins` folder and restart the server
 2. **Configuration**: Edit `plugins/SimulationOfLife/config.yml` to customize settings
