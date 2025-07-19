@@ -162,9 +162,8 @@ admin-notification-messages:
 - `simulationoflife.player`   - Access to only player commnands (default: true)
 - `simulationoflife.bypass`   - Bypass hunger reduction from block actions (default: false)
 
-# Troubleshooting
+# Known Issues
 
-### Common Issues
 - Specialization only saves to file if player has at least 1 point in something (This could lead to a problem if specializations are reset for a player as it may not update)
 - Some blocks like Short and Tall Grass still being incorrectly detected
 
