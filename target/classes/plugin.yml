@@ -1,16 +1,16 @@
 name: SimulationOfLife
-version: '0.6.0'
+version: '0.6.4'
 main: com.binkibonk.simulationoflife.SimulationOfLife
 api-version: '1.21'
 authors: [Binkibonk]
 description: Simulating the growth and fall of civilizations
 folia-supported: true
-website: https://github.com/binkibonk/simulation-of-life
+website: https://github.com/GabrielCirciu/SimulationOfLife
 
 commands:
   simulationoflife:
-    description: Main command for SimulationOfLife plugin
-    usage: /simulationoflife [reload|status|perf|debug|specs|stats]
+    description: Main commands for Simulation of Life
+    usage: /simulationoflife [stats|status|perf|debug|spec-all|spec-set|spec-reset|spec-reset-all|save|reload]
 
 permissions:
   simulationoflife.admin:

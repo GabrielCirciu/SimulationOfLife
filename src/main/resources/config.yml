@@ -6,50 +6,52 @@ general:
   # Enable or disable the plugin
   enabled: true
   # Debug mode for logging
-  debug: false
+  debug: true
   # Send player messages of their activity
-  player-messages: false
+  player-notifications: false
   # Send admin messages for commands (you shouldn't set this to false :) )
-  admin-messages: true
+  admin-notifications: true
 
 # Exhaustion settings
 exhaustion:
-  # Amount of exhaustion to reduce when placing a block (0.0 - 20.0)
+  # Amount of exhaustion when placing a block (4 = 1 hunger or saturation)
   place-block: 1.0
-  # Amount of exhaustion to reduce when destroying a block (0.0 - 20.0)
+  # Amount of exhaustion when destroying a block (4 = 1 hunger or saturation)
   mining-block: 1.0
-  # Amount of exhaustion to reduce when farming a block (0.0 - 20.0)
+  # Amount of exhaustion when farming a block (4 = 1 hunger or saturation)
   farming-block: 1.0
-  # Amount of exhaustion to reduce when hitting entities (0.0 - 20.0)
+  # Amount of exhaustion when hitting entities (4 = 1 hunger or saturation)
   hit-entity: 1.0
-  # Amount of exhaustion to reduce when doing a default action (0.0 - 20.0)
+  # Amount of exhaustion when doing a default action (4 = 1 hunger or saturation)
   default: 1.0
-  # Minimum food level before reducing (prevents starvation)
+  # Minimum food level before reducing (prevents starvation if above 1)
   minimum-food-level: 0.0
-  # Cooldown between exhaustion reductions in milliseconds (0 = no cooldown)
+  # Cooldown between exhaustion in milliseconds (0 = no cooldown)
   cooldown: 100
 
 # Specialization settings
 specialization:
+  # Amount of points to gain when mining
+  mining: 1
+  # Amount of points to gain when farming
+  farming: 1
   # Amount of points to gain when building
   building: 1
   # Amount of points to gain when fighting
   fighting: 1
   # Amount of points to gain when being athletic
-  athletics: 1
-  # Amount of points to gain when mining
-  mining: 1
-  # Amount of points to gain when farming
-  farming: 1
+  athletics: 1  
   # Maximum points a player can have
-  max-points: 100
+  max-points: 1000
+  # Auto-save interval in minutes (0 = disabled, only save on server shutdown)
+  auto-save-interval: 10
 
 # Run speed settings
 run-speed:
-  # Base run speed when sprinting (default Minecraft sprint speed is ~0.2)
-  base-speed: 0.2
-  # Speed increase per athletics level (0.01 = 1% increase per level)
-  speed-increase-per-level: 0.005
+  # Base run speed when sprinting
+  base-speed: 0.25
+  # Maximum run speed (minecraft max sprint speed is 1.0, going beyond will break it)
+  max-speed: 0.9
 
 # Block-specific settings
 blocks:
@@ -64,8 +66,8 @@ blocks:
     - CAVE_AIR
     - VOID_AIR
 
-# Messages
-messages:
+# Notifications
+admin-notification-messages:
   prefix: "<dark_gray>[<red>Simulation of Life</red>]</dark_gray> "
   exhaustion-reduced: "<yellow>Exhaustion: <red>{exhaustion}</red>/<green>4</green></yellow>"
   plugin-reloaded: "<green>Plugin configuration reloaded!</green>"

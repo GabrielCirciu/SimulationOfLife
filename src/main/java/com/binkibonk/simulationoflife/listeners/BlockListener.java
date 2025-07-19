@@ -27,11 +27,29 @@ public class BlockListener implements Listener {
         if (plugin.getConfigManager().getExemptBlocksFromPlacement().contains(blockType)) {
             return;
         }
-        boolean playerExhausted = plugin.getExhaustionManager().exhaustPlayerForBuildingBlocks(player);
-        if (playerExhausted) {
-            plugin.getPerformanceMonitor().recordPlayerExhaustion();
+        // Check if this block benefits from a axe/hoe/shovel (is a farming block)
+        if (isFarmingBlockPlacement(event.getBlock())) {
+            plugin.getSpecializationManager().increaseSpecialization(player, SpecializationManager.SpecializationType.FARMING, plugin.getConfigManager().getFarmingPoints());
+            boolean playerExhausted = plugin.getExhaustionManager().exhaustPlayerForFarmingBlocks(player);
+            if (playerExhausted) {
+                plugin.getPerformanceMonitor().recordPlayerExhaustion();
+            }
+            // Log
+            if (plugin.getConfigManager().isDebug()) {
+                plugin.getLogger().info("Player " + player.getName() + " placed a FARM block of type " + blockType.name() + " and got exhausted");
+            }
+        // If it's not a farming block, it's a default building block
+        } else {
+            plugin.getSpecializationManager().increaseSpecialization(player, SpecializationManager.SpecializationType.BUILDING, plugin.getConfigManager().getBuildingPoints());
+            boolean playerExhausted = plugin.getExhaustionManager().exhaustPlayerForBuildingBlocks(player);
+            if (playerExhausted) {
+                plugin.getPerformanceMonitor().recordPlayerExhaustion();
+            }
+            // Log
+            if (plugin.getConfigManager().isDebug()) {
+                plugin.getLogger().info("Player " + player.getName() + " placed a BUILDING block of type " + blockType.name() + " and got exhausted");
+            }
         }
-        plugin.getSpecializationManager().increaseSpecialization(player, SpecializationManager.SpecializationType.BUILDING, plugin.getConfigManager().getBuildingPoints());
         plugin.getSpecializationManager().increaseSpecialization(player, SpecializationManager.SpecializationType.ATHLETICS, plugin.getConfigManager().getAthleticsPoints());
         plugin.getPerformanceMonitor().recordBlockPlacedEvent();
     }
@@ -51,16 +69,30 @@ public class BlockListener implements Listener {
             if (playerExhausted) {
                 plugin.getPerformanceMonitor().recordPlayerExhaustion();
             }
+            // Log
+            if (plugin.getConfigManager().isDebug()) {
+                plugin.getLogger().info("Player " + player.getName() + " MINED a " + blockType.name() + " block and got exhausted");
+            }
+        // Check if this block benefits from a axe/hoe/shovel (is a farming block)
         } else if (isFarmingBlock(event.getBlock())) {
             plugin.getSpecializationManager().increaseSpecialization(player, SpecializationManager.SpecializationType.FARMING, plugin.getConfigManager().getFarmingPoints());
             boolean playerExhausted = plugin.getExhaustionManager().exhaustPlayerForFarmingBlocks(player);
             if (playerExhausted) {
                 plugin.getPerformanceMonitor().recordPlayerExhaustion();
             }
+            // Log
+            if (plugin.getConfigManager().isDebug()) {
+                plugin.getLogger().info("Player " + player.getName() + " FARMED a " + blockType.name() + " block and got exhausted");
+            }
+        // If it's not a mining or farming block, it's a default block
         } else {
             boolean playerExhausted = plugin.getExhaustionManager().exhaustPlayerDefault(player);
             if (playerExhausted) {
                 plugin.getPerformanceMonitor().recordPlayerExhaustion();
+            }
+            // Log
+            if (plugin.getConfigManager().isDebug()) {
+                plugin.getLogger().info("Player " + player.getName() + " DESTROYED a " + blockType.name() + " block and got exhausted");
             }
         }
         plugin.getSpecializationManager().increaseSpecialization(player, SpecializationManager.SpecializationType.ATHLETICS, plugin.getConfigManager().getAthleticsPoints());
@@ -77,7 +109,19 @@ public class BlockListener implements Listener {
 
     private boolean isFarmingBlock(org.bukkit.block.Block block) {
         Material material = block.getType();
-        if (Tag.MINEABLE_AXE.isTagged(material) || Tag.MINEABLE_HOE.isTagged(material) || Tag.MINEABLE_SHOVEL.isTagged(material)) {
+        if (Tag.MINEABLE_AXE.isTagged(material) || Tag.MINEABLE_HOE.isTagged(material) || Tag.MINEABLE_SHOVEL.isTagged(material)
+        || Tag.CROPS.isTagged(material) || Tag.LEAVES.isTagged(material) || Tag.SAPLINGS.isTagged(material) || Tag.FLOWERS.isTagged(material)
+        || Tag.SMALL_FLOWERS.isTagged(material)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isFarmingBlockPlacement(org.bukkit.block.Block block) {
+        Material material = block.getType();
+        if (Tag.MINEABLE_HOE.isTagged(material) || Tag.MINEABLE_SHOVEL.isTagged(material)
+        || Tag.CROPS.isTagged(material) || Tag.LEAVES.isTagged(material) || Tag.SAPLINGS.isTagged(material) || Tag.FLOWERS.isTagged(material)
+        || Tag.SMALL_FLOWERS.isTagged(material)) {
             return true;
         }
         return false;

@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Set;
 
 public class ConfigManager {
-    
+    // Plugin instance
     private final SimulationOfLife plugin;
+    // General settings
     private boolean enabled;
     private boolean debug;
-    private boolean playerMessages;
-    private boolean adminMessages;
+    private boolean playerNotifications;
+    private boolean adminNotifications;
+    // Exhaustion settings
     private float placeBlockExhaustionAmount;
     private float miningExhaustionAmount;
     private float farmingExhaustionAmount;
@@ -21,18 +23,23 @@ public class ConfigManager {
     private float defaultExhaustionAmount;
     private float minimumFoodLevel;
     private long exhaustionCooldown;
+    // Specialization settings
     private int buildingPoints;
     private int fightingPoints;
     private int athleticsPoints;
     private int miningPoints;
     private int farmingPoints;
     private int maxPoints;
+    private int autoSaveInterval;
+    // Run speed settings
     private float baseRunSpeed;
-    private float runSpeedIncreasePerLevel;
+    private float maxRunSpeed;
+    // Block exemptions
     private Set<Material> exemptBlocksFromPlacement;
     private Set<Material> exemptBlocksFromDestruction;
+    // Admin notifications
     private String prefix;
-    private String exhaustionMessage;
+    private String exhaustionNotification;
     private String pluginReloadedMessage;
     private String pluginStatusMessage;
     private String pluginDisabledMessage;
@@ -51,8 +58,8 @@ public class ConfigManager {
         if (general != null) {
             this.enabled = general.getBoolean("enabled", true);
             this.debug = general.getBoolean("debug", false);
-            this.playerMessages = general.getBoolean("player-messages", false);
-            this.adminMessages = general.getBoolean("admin-messages", true);
+            this.playerNotifications = general.getBoolean("player-notifications", false);
+            this.adminNotifications = general.getBoolean("admin-notifications", true);
         }
         // Load exhaustion settings
         ConfigurationSection exhaustion = plugin.getConfig().getConfigurationSection("exhaustion");
@@ -74,12 +81,13 @@ public class ConfigManager {
             this.miningPoints = specialization.getInt("mining", 1);
             this.farmingPoints = specialization.getInt("farming", 1);
             this.maxPoints = specialization.getInt("max-points", 100);
+            this.autoSaveInterval = specialization.getInt("auto-save-interval", 5);
         }
         // Load run speed settings
         ConfigurationSection runSpeed = plugin.getConfig().getConfigurationSection("run-speed");
         if (runSpeed != null) {
             this.baseRunSpeed = (float) runSpeed.getDouble("base-speed", 0.2);
-            this.runSpeedIncreasePerLevel = (float) runSpeed.getDouble("speed-increase-per-level", 0.1);
+            this.maxRunSpeed = (float) runSpeed.getDouble("max-speed", 1.0);
         }
         // Load block exemptions
         ConfigurationSection blocks = plugin.getConfig().getConfigurationSection("blocks");
@@ -88,10 +96,10 @@ public class ConfigManager {
             loadBlockExemptions("destroy-exempt", exemptBlocksFromDestruction);
         }
         // Load admin messages
-        ConfigurationSection adminMessages = plugin.getConfig().getConfigurationSection("admin-messages");
+        ConfigurationSection adminMessages = plugin.getConfig().getConfigurationSection("admin-notification-messages");
         if (adminMessages != null) {
             this.prefix = adminMessages.getString("prefix", "<dark_gray>[<red>Simulation of Life</red>]</dark_gray> ");
-            this.exhaustionMessage = adminMessages.getString("exhaustion-reduced", "<yellow>Exhaustion: <red>{exhaustion}</red>/<green>20</green></yellow>");
+            this.exhaustionNotification = adminMessages.getString("exhaustion-reduced", "<yellow>Exhaustion: <red>{exhaustion}</red>/<green>4</green></yellow>");
             this.pluginReloadedMessage = adminMessages.getString("plugin-reloaded", "<green>Plugin configuration reloaded!</green>");
             this.pluginStatusMessage = adminMessages.getString("plugin-status", "<green>Plugin is <dark_green>enabled</dark_green></green>");
             this.pluginDisabledMessage = adminMessages.getString("plugin-disabled", "<red>Plugin is <dark_red>disabled</dark_red></red>");
@@ -120,12 +128,12 @@ public class ConfigManager {
         }
     }
 
-    public boolean getPlayerMessages() {
-        return playerMessages;
+    public boolean getPlayerNotifications() {
+        return playerNotifications;
     }
     
-    public boolean getAdminMessages() {
-        return adminMessages;
+    public boolean getAdminNotifications() {
+        return adminNotifications;
     }
     
     public boolean isEnabled() {
@@ -188,12 +196,16 @@ public class ConfigManager {
         return maxPoints;
     }
     
+    public int getAutoSaveInterval() {
+        return autoSaveInterval;
+    }
+    
     public float getBaseRunSpeed() {
         return baseRunSpeed;
     }
     
-    public float getRunSpeedIncreasePerLevel() {
-        return runSpeedIncreasePerLevel;
+    public float getMaxRunSpeed() {
+        return maxRunSpeed;
     }
     
     public Set<Material> getExemptBlocksFromPlacement() {
@@ -208,8 +220,8 @@ public class ConfigManager {
         return prefix;
     }
     
-    public String getExhaustionMessage() {
-        return exhaustionMessage;
+    public String getExhaustionNotification() {
+        return exhaustionNotification;
     }
     
     public String getPluginReloadedMessage() {

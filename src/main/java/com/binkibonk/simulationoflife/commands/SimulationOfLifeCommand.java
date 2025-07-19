@@ -31,8 +31,8 @@ public class SimulationOfLifeCommand implements CommandExecutor, TabCompleter {
             }
             String subcommand = args[0].toLowerCase();
             switch (subcommand) {
-                case "reload":
-                    handleReload(sender);
+                case "stats":
+                    handlePlayerStats(sender);
                     break;
                 case "status":
                     handleStatus(sender);
@@ -43,11 +43,23 @@ public class SimulationOfLifeCommand implements CommandExecutor, TabCompleter {
                 case "debug":
                     handleDebug(sender);
                     break;
-                case "specs":
-                    handleSpecs(sender);
+                case "spec-all":
+                    handleShowAllSpecs(sender);
                     break;
-                case "stats":
-                    handlePlayerStats(sender);
+                case "spec-set":
+                    handleSetSpec(sender, args);
+                    break;
+                case "spec-reset":
+                    handleResetSpec(sender, args);
+                    break;
+                case "spec-reset-all":
+                    handleResetAllSpecs(sender, args);
+                    break;
+                case "save":
+                    handleSave(sender);
+                    break;
+                case "reload":
+                    handleReload(sender);
                     break;
                 default:
                     sendAdminHelpMessage(sender);
@@ -94,6 +106,65 @@ public class SimulationOfLifeCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(Component.text("=============================", NamedTextColor.GOLD));
     }
     
+    private void handleSave(CommandSender sender) {
+        plugin.getSpecializationManager().saveAllSpecializations();
+        sender.sendMessage(Component.text("Specializations saved!", NamedTextColor.GREEN));
+    }
+    
+    private void handleResetSpec(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage(Component.text("Usage: /simulationoflife spec-reset <player>", NamedTextColor.RED));
+            return;
+        }
+        String playerName = args[1];
+        Player player = plugin.getServer().getPlayer(playerName);
+        if (player == null) {
+            sender.sendMessage(Component.text("Player not found!", NamedTextColor.RED));
+            return;
+        }
+        plugin.getSpecializationManager().clearAllSpecializationsForPlayer(player);
+        sender.sendMessage(Component.text("Specializations reset!", NamedTextColor.GREEN));
+    }
+    
+    private void handleSetSpec(CommandSender sender, String[] args) {
+        if (args.length < 3) {
+            sender.sendMessage(Component.text("Usage: /simulationoflife spec-set <player> <spec> <level>", NamedTextColor.RED));
+            return;
+        }
+        String playerName = args[1];
+        Player player = plugin.getServer().getPlayer(playerName);
+        if (player == null) {
+            sender.sendMessage(Component.text("Player not found!", NamedTextColor.RED));
+            return;
+        }
+        String specName = args[2];
+        SpecializationManager.SpecializationType spec;
+        try {
+            spec = SpecializationManager.SpecializationType.valueOf(specName.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            sender.sendMessage(Component.text("Invalid specialization! Valid options are: " + 
+                Arrays.toString(SpecializationManager.SpecializationType.values()), NamedTextColor.RED));
+            return;
+        }
+        int level = Integer.parseInt(args[3]);
+        plugin.getSpecializationManager().setSpecializationLevelForPlayer(player, spec, level);
+        sender.sendMessage(Component.text("Specialization set!", NamedTextColor.GREEN));
+    }
+
+    private void handleResetAllSpecs(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage(Component.text("Usage: /simulationoflife spec-reset-all confirm", NamedTextColor.RED));
+            return;
+        }
+        String confirmation = args[1];
+        if (confirmation.equalsIgnoreCase("confirm")) {
+            plugin.getSpecializationManager().clearAllSpecializations();
+            sender.sendMessage(Component.text("All specializations reset!", NamedTextColor.GREEN));
+        } else {
+            sender.sendMessage(Component.text("Usage: /simulationoflife spec-reset-all confirm", NamedTextColor.RED));
+        }
+    }
+
     private void handleReload(CommandSender sender) {
         try {
             plugin.getConfigManager().loadConfig();
@@ -174,7 +245,7 @@ public class SimulationOfLifeCommand implements CommandExecutor, TabCompleter {
                         plugin.getConfigManager().isDebug() ? NamedTextColor.GREEN : NamedTextColor.RED)));
     }
     
-    private void handleSpecs(CommandSender sender) {
+    private void handleShowAllSpecs(CommandSender sender) {
         sender.sendMessage(Component.text("=== Specialization Statistics ===", NamedTextColor.GOLD));
         int totalBuilding = plugin.getSpecializationManager().getAllPlayersTotalSpecializationPoints(SpecializationManager.SpecializationType.BUILDING);
         int totalFighting = plugin.getSpecializationManager().getAllPlayersTotalSpecializationPoints(SpecializationManager.SpecializationType.FIGHTING);
@@ -236,18 +307,26 @@ public class SimulationOfLifeCommand implements CommandExecutor, TabCompleter {
     
     private void sendAdminHelpMessage(CommandSender sender) {
         sender.sendMessage(Component.text("=== Simulation of Life Commands ===", NamedTextColor.GOLD));
-        sender.sendMessage(Component.text("/simulationoflife reload ", NamedTextColor.YELLOW)
-                .append(Component.text("- Reload the plugin configuration", NamedTextColor.GRAY)));
+        sender.sendMessage(Component.text("/simulationoflife stats ", NamedTextColor.YELLOW)
+                .append(Component.text("- Show your specialization statistics", NamedTextColor.GRAY)));
         sender.sendMessage(Component.text("/simulationoflife status ", NamedTextColor.YELLOW)
                 .append(Component.text("- Show plugin status and settings", NamedTextColor.GRAY)));
         sender.sendMessage(Component.text("/simulationoflife perf ", NamedTextColor.YELLOW)
                 .append(Component.text("- Show performance statistics", NamedTextColor.GRAY)));
         sender.sendMessage(Component.text("/simulationoflife debug ", NamedTextColor.YELLOW)
                 .append(Component.text("- Show debug information", NamedTextColor.GRAY)));
-        sender.sendMessage(Component.text("/simulationoflife specs ", NamedTextColor.YELLOW)
+        sender.sendMessage(Component.text("/simulationoflife spec-all ", NamedTextColor.YELLOW)
                 .append(Component.text("- Show specialization statistics", NamedTextColor.GRAY)));
-        sender.sendMessage(Component.text("/simulationoflife stats ", NamedTextColor.YELLOW)
-                .append(Component.text("- Show your specialization statistics", NamedTextColor.GRAY)));
+        sender.sendMessage(Component.text("/simulationoflife spec-set <player> <spec> <level> ", NamedTextColor.YELLOW)
+                .append(Component.text("- Set a player's specialization level", NamedTextColor.GRAY)));
+        sender.sendMessage(Component.text("/simulationoflife spec-reset <player> ", NamedTextColor.YELLOW)
+                .append(Component.text("- Reset a player's every specialization to 0", NamedTextColor.GRAY)));
+        sender.sendMessage(Component.text("/simulationoflife spec-reset-all", NamedTextColor.YELLOW)
+                .append(Component.text("- Reset ALL players' every specialization to 0", NamedTextColor.GRAY)));
+        sender.sendMessage(Component.text("/simulationoflife save ", NamedTextColor.YELLOW)
+                .append(Component.text("- Save all players' specializations to file", NamedTextColor.GRAY)));
+        sender.sendMessage(Component.text("/simulationoflife reload ", NamedTextColor.YELLOW)
+                .append(Component.text("- Reload the plugin configuration", NamedTextColor.GRAY)));
     }
     
     @Override
@@ -256,7 +335,7 @@ public class SimulationOfLifeCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             String partial = args[0].toLowerCase();
             if (sender.hasPermission("simulationoflife.admin")) {
-                for (String subcommand : Arrays.asList("reload", "status", "perf", "debug", "specs", "stats")) {
+                for (String subcommand : Arrays.asList("stats", "status", "perf", "debug", "spec-all", "spec-set", "spec-reset", "spec-reset-all", "save", "reload")) {
                     if (subcommand.startsWith(partial)) {
                         completions.add(subcommand);
                     }

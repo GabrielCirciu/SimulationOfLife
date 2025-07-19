@@ -27,6 +27,10 @@ public class EntityListener implements Listener {
         if (playerExhausted) {
             plugin.getPerformanceMonitor().recordPlayerExhaustion();
         }
+        // Log
+        if (plugin.getConfigManager().isDebug()) {
+            plugin.getLogger().info("Player " + player.getName() + " HIT an entity and got exhausted");
+        }
         plugin.getSpecializationManager().increaseSpecialization(player, SpecializationManager.SpecializationType.FIGHTING, plugin.getConfigManager().getFightingPoints());
         plugin.getSpecializationManager().increaseSpecialization(player, SpecializationManager.SpecializationType.ATHLETICS, plugin.getConfigManager().getAthleticsPoints());
         plugin.getPerformanceMonitor().recordEntityHitEvent();

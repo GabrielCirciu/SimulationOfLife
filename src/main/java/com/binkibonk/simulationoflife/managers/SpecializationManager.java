@@ -18,7 +18,7 @@ public class SpecializationManager {
         FIGHTING(1, "Fighting"),
         FARMING(2, "Farming"),
         MINING(3, "Mining"),
-        ATHLETICS(4, "Athletics"); // TBD, this would modify running and jumping exhaustion
+        ATHLETICS(4, "Athletics");
         // Other ideas: Crafter, Chef, Fisher, Lumberjack, Artificer / Thaumaturge
         private final int index;
         private final String displayName;
@@ -59,15 +59,16 @@ public class SpecializationManager {
         int currentLevel = specializations[type.getIndex()];
         int newLevel = currentLevel + amount;
         int maxLevel = plugin.getConfigManager().getMaxPoints();
+        boolean redistributed = false;
         if (newLevel > maxLevel) {
             return maxLevel;
         }
         // Redistributing points if player has more points that max level overall
         // Redistribution happens by lowering the lowest larger than 0specialization level by the amount
         int totalPoints = getTotalSpecializationPointsOfPlayer(player);
+        int lowestLevelIndex = 0;
         if (totalPoints + amount > maxLevel) {
             int lowestLevel = maxLevel;
-            int lowestLevelIndex = 0;
             for (int i = 0; i < specializations.length - 1; i++) {
                 if (specializations[i] < lowestLevel && specializations[i] > 0 && i != type.getIndex()) {
                     lowestLevel = specializations[i];
@@ -75,12 +76,18 @@ public class SpecializationManager {
                 }
             }
             specializations[lowestLevelIndex] = lowestLevel - amount;
+            redistributed = true;
         }
         specializations[type.getIndex()] = newLevel;
         // Log
         if (plugin.getConfigManager().isDebug()) {
-            plugin.getLogger().info("Increased " + type.getDisplayName() + " specialization for " + player.getName() + 
-                " by " + amount + " (from " + currentLevel + " to " + newLevel + ")");
+            if (redistributed) {
+                plugin.getLogger().info("Redistributed points for " + player.getName() + "from" + SpecializationType.values()[lowestLevelIndex].getDisplayName() + 
+                    " to " + type.getDisplayName() + " by " + amount);
+            } else {
+                plugin.getLogger().info("Increased points for " +player.getName() + " in " + type.getDisplayName() + 
+                    " by " + amount + " (from " + currentLevel + " to " + newLevel + ")");
+            }
         }
         return newLevel;
     }
@@ -88,8 +95,9 @@ public class SpecializationManager {
     public int getSpecializationLevelOfPlayer(Player player, SpecializationType type) {
         UUID playerId = player.getUniqueId();
         int[] specializations = playerSpecializations.get(playerId);
-        if (getTotalSpecializationPointsOfPlayer(player) < 10 || specializations == null) {
-            return 0;
+        // Log
+        if (plugin.getConfigManager().isDebug()) {
+            plugin.getLogger().info("Player " + player.getName() + " has a " + type.getDisplayName() + " level of " + specializations[type.getIndex()]);
         }
         return specializations[type.getIndex()];
     }
@@ -150,8 +158,14 @@ public class SpecializationManager {
         return count;
     }
     
-    public void clearSpecializationsForPlayer(Player player) {
+    public void clearAllSpecializationsForPlayer(Player player) {
         playerSpecializations.remove(player.getUniqueId());
+    }
+
+    public void setSpecializationLevelForPlayer(Player player, SpecializationType type, int level) {
+        UUID playerId = player.getUniqueId();
+        int[] specializations = getOrCreateSpecializationsForPlayer(playerId);
+        specializations[type.getIndex()] = level;
     }
     
     public void clearAllSpecializations() {

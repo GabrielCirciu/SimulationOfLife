@@ -18,8 +18,6 @@ public class ExhaustionManager {
         this.lastExhaustion = new ConcurrentHashMap<>();
     }
     
-    // Reduces player food level when building blocks
-    // This comment is here for future Builder specialization
     public boolean exhaustPlayerForBuildingBlocks(Player player) {
         if (!plugin.getConfigManager().isEnabled() || 
             player.hasPermission("simulationoflife.bypass") || 
@@ -27,14 +25,11 @@ public class ExhaustionManager {
             return false;
         }
         float specializationLevel = plugin.getSpecializationManager().getSpecializationLevelOfPlayer(player, SpecializationManager.SpecializationType.BUILDING);
-        float exhaustionDivisor = Math.max(1, specializationLevel / 10);
-        float exhaustionAmount = plugin.getConfigManager().getPlaceBlockExhaustionAmount() / exhaustionDivisor;
+        float maxSpecializationLevel = plugin.getConfigManager().getMaxPoints();
+        float exhaustionAmount = plugin.getConfigManager().getPlaceBlockExhaustionAmount() * (1 - specializationLevel / maxSpecializationLevel);
         return exhaustPlayer(player, exhaustionAmount, "building");
     }
     
-    // Reduces player food level when demolishing a block
-    // This comment is here for future Builder specialization
-    // This is going to be split up in the future to different blocks
     public boolean exhaustPlayerForMiningBlocks(Player player) {
         if (!plugin.getConfigManager().isEnabled() || 
             player.hasPermission("simulationoflife.bypass") || 
@@ -42,8 +37,8 @@ public class ExhaustionManager {
             return false;
         }        
         float specializationLevel = plugin.getSpecializationManager().getSpecializationLevelOfPlayer(player, SpecializationManager.SpecializationType.MINING);
-        float exhaustionDivisor = Math.max(1, specializationLevel / 10);
-        float exhaustionAmount = plugin.getConfigManager().getMiningExhaustionAmount() / exhaustionDivisor;
+        float maxSpecializationLevel = plugin.getConfigManager().getMaxPoints();
+        float exhaustionAmount = plugin.getConfigManager().getMiningExhaustionAmount() * (1 - specializationLevel / maxSpecializationLevel);
         return exhaustPlayer(player, exhaustionAmount, "mining");
     }
     
@@ -54,22 +49,18 @@ public class ExhaustionManager {
             return false;
         }
         float specializationLevel = plugin.getSpecializationManager().getSpecializationLevelOfPlayer(player, SpecializationManager.SpecializationType.FARMING);
-        float exhaustionDivisor = Math.max(1, specializationLevel / 10);
-        float exhaustionAmount = plugin.getConfigManager().getFarmingExhaustionAmount() / exhaustionDivisor;
+        float maxSpecializationLevel = plugin.getConfigManager().getMaxPoints();
+        float exhaustionAmount = plugin.getConfigManager().getFarmingExhaustionAmount() * (1 - specializationLevel / maxSpecializationLevel);
         return exhaustPlayer(player, exhaustionAmount, "farming");
     }
     
-    // Reduces player food level when hitting entities
-    // This comment is here for future Fighter specialization
     public boolean exhaustPlayerForHittingEntities(Player player) {
-        if (!plugin.getConfigManager().isEnabled() || 
-            player.hasPermission("simulationoflife.bypass") || 
-            !canGetExhausted(player)) {
+        if (!plugin.getConfigManager().isEnabled() || player.hasPermission("simulationoflife.bypass") || !canGetExhausted(player)) {
             return false;
         }
         float specializationLevel = plugin.getSpecializationManager().getSpecializationLevelOfPlayer(player, SpecializationManager.SpecializationType.FIGHTING);
-        float exhaustionDivisor = Math.max(1, specializationLevel / 10);
-        float exhaustionAmount = plugin.getConfigManager().getHitEntityExhaustionAmount() / exhaustionDivisor;
+        float maxSpecializationLevel = plugin.getConfigManager().getMaxPoints();
+        float exhaustionAmount = plugin.getConfigManager().getHitEntityExhaustionAmount() * (1 - specializationLevel / maxSpecializationLevel);
         return exhaustPlayer(player, exhaustionAmount, "hitting");
     }
 
@@ -110,8 +101,8 @@ public class ExhaustionManager {
         if (plugin.getConfigManager().getExhaustionCooldown() > 0) {
             lastExhaustion.put(playerId, System.currentTimeMillis());
         }
-        if (plugin.getConfigManager().getPlayerMessages()) {
-            sendExhaustionMessageToPlayer(player);
+        if (plugin.getConfigManager().getPlayerNotifications()) {
+            sendExhaustionNotificationToPlayer(player);
         }
         // Log
         if (plugin.getConfigManager().isDebug()) {
@@ -120,24 +111,26 @@ public class ExhaustionManager {
         return true;
     }
     
-    private void sendExhaustionMessageToPlayer(Player player) {
-        String message = plugin.getConfigManager().getExhaustionMessage();
+    private void sendExhaustionNotificationToPlayer(Player player) {
+        String message = plugin.getConfigManager().getExhaustionNotification();
         message = message.replace("{exhaustion}", String.format("%.1f", player.getExhaustion()));
         message = plugin.getConfigManager().getPrefix() + message;
         Component component = MiniMessage.miniMessage().deserialize(message);
         player.sendMessage(component);
     }
+
+    public int getActiveExhaustionCooldownsForAllPlayers() {
+        return lastExhaustion.size();
+    }
     
+    // To be implemented in the future
     public void clearExhaustionCooldownForPlayer(Player player) {
         UUID playerId = player.getUniqueId();
         lastExhaustion.remove(playerId);
     }
 
+    // To be implemented in the future
     public void clearAllExhaustionCooldownsForAllPlayers() {
         lastExhaustion.clear();
-    }
-    
-    public int getActiveExhaustionCooldownsForAllPlayers() {
-        return lastExhaustion.size();
     }
 } 

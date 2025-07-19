@@ -27,18 +27,29 @@ public class RunListener implements Listener {
     }
     
     private void applyRunSpeedBoost(Player player) {
+        float baseSpeed = plugin.getConfigManager().getBaseRunSpeed();
+        float maxSpecializationLevel = plugin.getConfigManager().getMaxPoints();
+        float maxSpeed = plugin.getConfigManager().getMaxRunSpeed();
         int athleticsLevel = plugin.getSpecializationManager().getSpecializationLevelOfPlayer(
-            player, 
+            player,
             com.binkibonk.simulationoflife.managers.SpecializationManager.SpecializationType.ATHLETICS
         );
-        float speedBoost = athleticsLevel * plugin.getConfigManager().getRunSpeedIncreasePerLevel();
-        float newSpeed = plugin.getConfigManager().getBaseRunSpeed() + speedBoost;
-        // Preventing speed from exceeding Minecraft's limits (-1.0 to 1.0)
-        newSpeed = Math.max(-1.0f, Math.min(1.0f, newSpeed));
+        float newSpeed = baseSpeed + (athleticsLevel / maxSpecializationLevel) * (maxSpeed - baseSpeed);
         player.setWalkSpeed(newSpeed);
+        // Log
+        if (plugin.getConfigManager().isDebug()) {
+            plugin.getLogger().info("Player " + player.getName() + " is sprinting and got a speed of " + newSpeed +
+            " with a base speed of " + baseSpeed + " and a max speed of " + maxSpeed +
+            " with a max level of " + maxSpecializationLevel + " and a current level of " + athleticsLevel);
+        }
     }
     
     private void resetRunSpeed(Player player) {
-        player.setWalkSpeed(0.2f);
+        float baseSpeed = plugin.getConfigManager().getBaseRunSpeed();
+        player.setWalkSpeed(baseSpeed);
+        // Log
+        if (plugin.getConfigManager().isDebug()) {
+            plugin.getLogger().info("Player " + player.getName() + " is not sprinting and got a speed of " + baseSpeed);
+        }
     }
 } 
