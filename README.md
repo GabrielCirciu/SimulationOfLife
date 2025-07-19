@@ -161,3 +161,12 @@ messages:
 ### Common Issues
 
 Let me know of any issues.
+
+# Upcoming features
+
+* Reset stats command
+* Modify stats command
+* Periodic Saving instead of one-time on server shutdown
+* More exetensive logging
+
+* Weights system?
