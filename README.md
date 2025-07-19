@@ -1,19 +1,20 @@
 # Simulation of Life  
 
-A simple, yet hardcore, plugin that adds an extra layer of survival mechanics by exhausting the player when performing certain actions such as mining, farming, and fightng. Alongside that it adds a specialization system that lets you get less exhausted in a field that you master. Intended for large population servers, as solo players can only do so much before their food levels run out.
-
-All of this works in the backend, but allows players to view their specialization levels if they desire.
+A simple, yet hardcore, plugin that adds an extra layer of survival mechanics by exhausting the player when performing certain actions such as mining, farming, building, and fightng. Alongside that it adds a specialization system that lets you get less exhausted in a field that you master. Intended for large population servers, as solo players can only do so much before their food levels run out.
 
 # Features
 
-- **Exhaustion Management**: Players gain Exhaustion when doing certain activities such as mining, fighting, farming
+### Main Features:
+- **Exhaustion Management**: Players gain Exhaustion when doing certain activities such as mining, fighting, building, and farming
 - **Specializations**: Increase your efficieny by managing what you specialize in, be careful though, you can only be good at so many things
-- **Configurable Settings**: Customize many parts of your experience, like the exhaustion amounts, cooldown, block exemptions, specialization points gain
-- **Permission System**: Allows the bypassing of systems or altering for selected roles such as players or admins
-- **Block Exemptions**: Exclude specific block types from exhaustion gain
-- **Cooldown System**: Prevent over-exhaustion by modifying cooldowns between exhaustion checks
+
+### Optional:
+- **Configurable**: Customize many parts of your experience, like the exhaustion amounts, cooldown, block exemptions, specialization points gain, and run speed values
+- **Permissions**: Allows the bypassing of systems or altering for selected roles such as players or admins
+- **Exemptions**: Exclude specific block types from exhaustion gain
+- **Cooldowns**: Prevent over-exhaustion by modifying cooldowns between exhaustion checks
 - **Debug Mode**: (somewhat) Detailed logging for troubleshooting
-- **Admin Commands**: From basic functions like reloading the plugin, to advanced statistics to overview the servers specialization distribution
+- **Commands**: From basic functions like reloading the plugin, to advanced statistics to overview the servers specialization distribution
 
 # Usage
 
@@ -71,43 +72,44 @@ The plugin creates a `config.yml` file in the `plugins/SimulationOfLife/` direct
 
 ```yaml
 general:
-  enabled: true             # Enable or disable the plugin
-  debug: false              # Debug mode for server-side logging
-  player-messages: false    # Send player messages of their activity
-  admin-messages: true      # Send admin messages for commands (you shouldn't set this to false :) )
+  enabled: true                 # Enable or disable the plugin
+  debug: true                   # Debug mode for server-side logging
+  player-notifications: false   # Send player notifications of their activity
+  admin-notifications: true     # Send admin notifications for commands (you shouldn't set this to false :) )
 ```
 
 ### Exhaustion Settings
 
 ```yaml
 exhaustion:
-  place-block: 1.0          # Amount of exhaustion to gain when placing a block (0.0 - 20.0)
-  mining-block: 1.0         # Amount of exhaustion to gain when destroying a block (0.0 - 20.0)
-  farming-block: 1.0        # Amount of exhaustion to gain when farming a block (0.0 - 20.0)
-  hit-entity: 1.0           # Amount of exhaustion to gain when hitting entities (0.0 - 20.0)
-  default: 1.0              # Amount of exhaustion to reduce when doing a default action (0.0 - 20.0)
-  minimum-food-level: 0.0   # Minimum food level before reduction happens (prevents starvation at >0)
-  cooldown: 100             # Cooldown between exhaustions in milliseconds (0 = no cooldown)
+  place-block: 1.0           # Amount of exhaustion when placing a block (4 points = 1 hunger or saturation)
+  mining-block: 1.0          # Amount of exhaustion when destroying a block (4 points = 1 hunger or saturation)
+  farming-block: 1.0         # Amount of exhaustion when farming a block (4 points = 1 hunger or saturation)
+  hit-entity: 1.0            # Amount of exhaustion when hitting entities (4 points = 1 hunger or saturation)
+  default: 1.0               # Amount of exhaustion when doing a default action (4 points = 1 hunger or saturation)
+  minimum-food-level: 0.0    # Minimum food level before reducing (prevents starvation if above 1)
+  cooldown: 100              # Cooldown between exhaustion in milliseconds (0 = no cooldown)
 ```
 
 ### Specialization Settings
 
 ```yaml
 specialization:
+  mining: 1                 # Amount of points to gain when mining
+  farming: 1                # Amount of points to gain when farming
   building: 1               # Amount of points to gain when building
   fighting: 1               # Amount of points to gain when fighting
   athletics: 1              # Amount of points to gain when being athletic
-  mining: 1                 # Amount of points to gain when mining
-  farming: 1                # Amount of points to gain when farming
-  max-points: 100           # Maximum points a player can have
+  max-points: 1000          # Maximum points a player can have
+  auto-save-interval: 10    # Auto-save interval in minutes (0 = disabled, only save on server shutdown)
 ```
 
 ### Athletics Settings
 
 ```yaml
 run-speed:
-  base-speed: 0.2           # Base run speed when sprinting (default Minecraft sprint speed is ~0.2)
-  speed-increase-per-level: 0.005  # Speed increase per athletics level (0.01 = 1% increase per level)
+  base-speed: 0.25  # Base run speed when sprinting
+  max-speed: 0.9    # Maximum run speed (minecraft max sprint speed is 1.0, going beyond will break it)
 ```
 
 ### Block Exemptions
@@ -124,10 +126,10 @@ blocks:
     - VOID_AIR
 ```
 
-### Messages
+### Notification Messages
 
 ```yaml
-messages:
+admin-notification-messages:
   prefix: "<dark_gray>[<red>Simulation of Life</red>]</dark_gray> "
   exhaustion-reduced: "<yellow>Exhaustion: <red>{exhaustion}</red>/<green>4</green></yellow>"
   plugin-reloaded: "<green>Plugin configuration reloaded!</green>"
@@ -139,34 +141,35 @@ messages:
 
 ### Admin Commands
 
-- `/simulationoflife reload` - Reload the plugin configuration
-- `/simulationoflife status` - Show plugin status and current settings
-- `/simulationoflife perf`   - Show performance metrics of actions happening
-- `/simulationoflife debug`  - Show if debug is enabled
-- `/simulationoflife specs`  - Show overall server-wide specialization stats
-- `/simulationoflife stats`  - Show your own player specialization stats
+- `/simulationoflife stats`             - Show your specialization statistics
+- `/simulationoflife status`            - Show plugin status and settings
+- `/simulationoflife perf`              - Show performance statistics
+- `/simulationoflife debug`             - Show debug information
+- `/simulationoflife spec-all`          - Show specialization statistics
+- `/simulationoflife spec-set`          - Set a player's specialization level
+- `/simulationoflife spec-reset`        - Reset a player's every specialization to 0
+- `/simulationoflife spec-reset-all`    - Reset ALL players' every specialization to 0
+- `/simulationoflife save`              - Save all players' specializations to file
+- `/simulationoflife reload`            - Reload the plugin configuration
 
 ### Player Commands
 
-- `/simulationoflife stats`  - Show your own player specialization stats
+- `/simulationoflife stats`  - Show your specialization statistics
 
 # In-Game Permissions
 
 - `simulationoflife.admin`    - Access to admin commands (default: op)
 - `simulationoflife.player`   - Access to only player commnands (default: true)
-- `simulationoflife.bypass`  - Bypass hunger reduction from block actions (default: false)
+- `simulationoflife.bypass`   - Bypass hunger reduction from block actions (default: false)
 
 # Troubleshooting
 
 ### Common Issues
-
-Let me know of any issues.
+- Specialization only saves to file if player has at least 1 point in something (This could lead to a problem if specializations are reset for a player as it may not update)
+- Some blocks like Short and Tall Grass still being incorrectly detected
 
 # Upcoming features
 
-* Reset stats command
-* Modify stats command
-* Periodic Saving instead of one-time on server shutdown
-* More exetensive logging
-
-* Weights system?
+- More extensive statistics tracking and saving to file - My data science desires must be fulfilled
+- Weight system - can't have you carrying all those stacks of wood ;)
+- Difficulty setting - so you can play either solo, with few friends, or on large servers in a balanced way
