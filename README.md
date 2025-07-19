@@ -1,27 +1,52 @@
-# Simulation of Life
+# Simulation of Life  
 
-A hardcore plugin that adds survival mechanics by exhausting the player when performing certain actions such as mining, farming, fightng, and more. Alongside that it adds a specialization system that lets you get less exhausted in a field that you master, but beware, there is only so much you can do.
+A simple, yet hardcore, plugin that adds an extra layer of survival mechanics by exhausting the player when performing certain actions such as mining, farming, and fightng. Alongside that it adds a specialization system that lets you get less exhausted in a field that you master. Intended for large population servers, as solo players can only do so much before their food levels run out.
 
-## Features
+All of this works in the backend, but allows players to view their specialization levels if they desire.
+
+# Features
 
 - **Exhaustion Management**: Players gain Exhaustion when doing certain activities such as mining, fighting, farming
 - **Specializations**: Increase your efficieny by managing what you specialize in, be careful though, you can only be good at so many things
 - **Configurable Settings**: Customize many parts of your experience, like the exhaustion amounts, cooldown, block exemptions, specialization points gain
-- **Permission System**: Bypass permissions for admins or specific players
+- **Permission System**: Allows the bypassing of systems or altering for selected roles such as players or admins
 - **Block Exemptions**: Exclude specific block types from exhaustion gain
-- **Cooldown System**: Prevent spam by implementing cooldowns between exhaustion checks
-- **Debug Mode**: Detailed logging for troubleshooting
-- **Admin Commands**: From statistics to reloading the plugin, it offers some tools to observe and manage the plugin
+- **Cooldown System**: Prevent over-exhaustion by modifying cooldowns between exhaustion checks
+- **Debug Mode**: (somewhat) Detailed logging for troubleshooting
+- **Admin Commands**: From basic functions like reloading the plugin, to advanced statistics to overview the servers specialization distribution
 
-## Requirements
+# Usage
+
+## For Players
+
+1. The plugin automatically activates when you place or destroy blocks, or hit entities in survival mode
+2. You'll receive a message when you recieve exhaustion (if player messages are enabled)
+3. Players with the `simulationoflife.bypass` permission won't gain exhaustion
+4. The plugin may respect minimum hunger levels to prevent starvation
+
+## For Server Administrators
+
+1. **Installation**: Place the JAR file in your `plugins` folder and restart the server
+2. **Configuration**: Edit `plugins/SimulationOfLife/config.yml` to customize settings
+3. **Reloading**: Use `/simulationoflife reload` to apply configuration changes without restarting
+4. **Monitoring**: Use `/simulationoflife status` to check plugin status and settings
+5. **Debugging**: Enable debug mode in the config to see server-side logs
+
+# Installation
+
+## Download Pre-built JAR
+
+1. Download the latest release JAR file from the releases page.
+2. Place the JAR file in your server's `plugins` folder.
+3. Start or restart your Folia server.
+
+## Building from Source
+
+### Requirements for building
 
 - **Minecraft Server**: Folia 1.20.4 or higher
 - **Java**: Java 21 or higher
 - **Maven**: For building the plugin
-
-## Installation
-
-### Building from Source
 
 1. Clone this repository:
    ```bash
@@ -38,17 +63,11 @@ A hardcore plugin that adds survival mechanics by exhausting the player when per
 
 4. Start or restart your Folia server.
 
-### Download Pre-built JAR
-
-1. Download the latest release JAR file from the releases page.
-2. Place the JAR file in your server's `plugins` folder.
-3. Start or restart your Folia server.
-
-## Configuration
+# Configuration
 
 The plugin creates a `config.yml` file in the `plugins/SimulationOfLife/` directory. Here's what each section does:
 
-### General Settings
+## General Settings
 
 ```yaml
 general:
@@ -58,7 +77,7 @@ general:
   admin-messages: true      # Send admin messages for commands (you shouldn't set this to false :) )
 ```
 
-### Hunger Settings
+## Exhaustion Settings
 
 ```yaml
 exhaustion:
@@ -71,7 +90,7 @@ exhaustion:
   cooldown: 100             # Cooldown between exhaustions in milliseconds (0 = no cooldown)
 ```
 
-### Specialization Settings
+## Specialization Settings
 
 ```yaml
 specialization:
@@ -83,16 +102,15 @@ specialization:
   max-points: 100           # Maximum points a player can have
 ```
 
-### Athletics Settings
+## Athletics Settings
 
 ```yaml
 run-speed:
-  
   base-speed: 0.2           # Base run speed when sprinting (default Minecraft sprint speed is ~0.2)
   speed-increase-per-level: 0.005  # Speed increase per athletics level (0.01 = 1% increase per level)
 ```
 
-### Block Exemptions
+## Block Exemptions
 
 ```yaml
 blocks:
@@ -106,7 +124,7 @@ blocks:
     - VOID_AIR
 ```
 
-### Messages
+## Messages
 
 ```yaml
 messages:
@@ -117,9 +135,9 @@ messages:
   plugin-disabled: "<red>Plugin is <dark_red>disabled</dark_red></red>" 
 ```
 
-## Commands
+# Commands
 
-### Admin Commands
+## Admin Commands
 
 - `/simulationoflife reload` - Reload the plugin configuration
 - `/simulationoflife status` - Show plugin status and current settings
@@ -128,26 +146,26 @@ messages:
 - `/simulationoflife specs`  - Show overall server-wide specialization stats
 - `/simulationoflife stats`  - Show your own player specialization stats
 
-### Player Commands
+## Player Commands
 
 - `/simulationoflife stats`  - Show your own player specialization stats
 
-### Permissions
+# In-Game Permissions
 
-- `simulationoflife.admin`   - Access to admin commands (default: op)
+- `simulationoflife.admin`    - Access to admin commands (default: op)
 - `simulationoflife.player`   - Access to only player commnands (default: true)
 - `simulationoflife.bypass`  - Bypass hunger reduction from block actions (default: false)
 
-## Usage
+# Usage
 
-### For Players
+## For Players
 
 1. The plugin automatically activates when you place or destroy blocks, or hit entities in survival mode
-2. You'll receive a message when your hunger is reduced (if player messages are enabled)
+2. You'll receive a message when you recieve exhaustion (if player messages are enabled)
 3. Players with the `simulationoflife.bypass` permission won't gain exhaustion
 4. The plugin may respect minimum hunger levels to prevent starvation
 
-### For Server Administrators
+## For Server Administrators
 
 1. **Installation**: Place the JAR file in your `plugins` folder and restart the server
 2. **Configuration**: Edit `plugins/SimulationOfLife/config.yml` to customize settings
